@@ -30,13 +30,18 @@ function Payment() {
        const getClientSecret= async() => {
           const response= await axios({
               method:'post',
-              //stripe expects the total in a currencies in subunits
+              //stripe expects the total in a currencies in subunits i.e. 
+              //it accepts 100 paisa for 1 rupee
+              //we multiply the total by 100 to conver it into paisa
               url:`/payments/create?total=${getBasketTotal(basket) * 100}`
           });
           setClientSecret(response.data.clientSecret)
        }
 
-
+        //declare the function above and run it
+        //useEffect run when the basket item is changed
+        //whenever the basket item change the 'clientSecret' is changed 
+        //because the total amount of items is changed
        getClientSecret();
     }, [basket])
 
@@ -46,6 +51,7 @@ function Payment() {
     const handleSubmit = async (event) => {
         //do all fancy stripe stuff
         event.preventDefault();
+        //disable the button once you click it
         setProcessing(true);
          
         const payload = await stripe.confirmCardPayment(clientSecret, {
@@ -53,8 +59,11 @@ function Payment() {
                 card: elements.getElement(CardElement)
             }
         }).then(({ paymentIntent }) =>{
+            //after payment is done a response came back
+            //but we need only 'paymentIntent' so we destructure it from response
             //paymentIntent= payment Confirmation
 
+             //upload the orders of users in the database of Firebase(Firestore database)
              db
              .collection('users')
              .doc(user?.uid)
@@ -69,11 +78,14 @@ function Payment() {
             setSucceeded(true);
             setError(null)
             setProcessing(false)
-
+           
+            //empty the basket when the payment is done
+            //this functionality is implemented in reducer.js
+            //react-context-api
             dispatch({
               type: 'EMPTY_BASKET'  
             })
-
+              //when the payment is completed throw the user to 'Orders' page
             history.replace('/orders')
 
         })

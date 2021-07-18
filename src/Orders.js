@@ -8,10 +8,14 @@ function Orders() {
     const[{basket,user},dispatch]=useStateValue();
     const [orders,setOrders]=useState([]);
 
+    //This is called evertime when user is changed
     useEffect(() => {
         console.log("The user is",user);
         if(user){
             console.log("user id>>",user?.uid)
+            //Now to show the orders from the databse we fetch the 
+            //order  of a particular user to show on orders page
+            //path to get all orders from the databse
             db.collection('users')
             .doc(user?.uid)
             .collection('orders')
