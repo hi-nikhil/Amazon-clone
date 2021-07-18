@@ -1,4 +1,4 @@
-#Amazon Clone
+# Amazon Clone
 
 • Full-stack E-commerce website made in React.js and Firebase using Cloud Firestore and Stripe.js.
 
